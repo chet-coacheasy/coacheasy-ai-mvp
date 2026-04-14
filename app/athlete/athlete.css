@@ -1,0 +1,384 @@
+/* ── Athlete Chat — Dark Navy Theme ── */
+.ath {
+  --red: #ED1C24;
+  --bg: #0d0d0d;
+  --nav: #111;
+  --s1: #1a1a1a;
+  --s2: #222;
+  --navy: #2d4a6b;
+
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: #fff;
+  font-family: inherit;
+}
+
+/* ── Top Bar ── */
+.ath-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--nav);
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+}
+.ath-logo {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+.ath-logo span {
+  color: var(--red);
+}
+.ath-profile-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+.ath-profile-bar .sep {
+  color: #333;
+}
+.ath-profile-bar strong {
+  color: #999;
+  font-weight: 500;
+}
+.ath-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ath-edit-link {
+  font-size: 12px;
+  color: var(--red);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+}
+.ath-edit-link:hover {
+  text-decoration: underline;
+}
+.ath-portal-btn {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--s1);
+  border: 1px solid #333;
+  font-size: 12px;
+  font-weight: 500;
+  color: #aaa;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.ath-portal-btn:hover {
+  background: var(--s2);
+  color: #ccc;
+}
+
+/* ── Chat Area ── */
+.ath-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 16px;
+}
+.ath-chat-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Message Bubbles ── */
+.ath-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ath-msg.user {
+  flex-direction: row-reverse;
+}
+.ath-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ath-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.ath-msg:not(.user) .ath-bubble {
+  background: var(--navy);
+  color: #e8e8e8;
+  border-top-left-radius: 4px;
+}
+.ath-msg.user .ath-bubble {
+  background: var(--s1);
+  border: 1px solid #2a2a2a;
+  color: #ccc;
+  border-top-right-radius: 4px;
+}
+
+/* ── Typing Indicator ── */
+.ath-typing {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ath-typing-dots {
+  background: var(--navy);
+  padding: 12px 16px;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  display: flex;
+  gap: 4px;
+}
+.ath-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  animation: ath-bounce 1.4s infinite ease-in-out both;
+}
+.ath-dot:nth-child(1) { animation-delay: -0.32s; }
+.ath-dot:nth-child(2) { animation-delay: -0.16s; }
+.ath-dot:nth-child(3) { animation-delay: 0s; }
+@keyframes ath-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* ── Input Area ── */
+.ath-input-area {
+  padding: 16px;
+  border-top: 1px solid #222;
+  background: var(--nav);
+  flex-shrink: 0;
+}
+.ath-input-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.ath-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.ath-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--s2);
+  border: 1px solid #333;
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.ath-chip:hover {
+  border-color: var(--red);
+  color: #ddd;
+}
+.ath-input-row {
+  display: flex;
+  gap: 8px;
+}
+.ath-input {
+  flex: 1;
+  background: var(--s1);
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ccc;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.ath-input:focus {
+  border-color: #444;
+}
+.ath-input::placeholder {
+  color: #555;
+}
+.ath-send {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--s1);
+  border: 1px solid #2a2a2a;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.ath-send:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+.ath-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.ath-send:disabled:hover {
+  background: var(--s1);
+  border-color: #2a2a2a;
+  color: #888;
+}
+.ath-footer {
+  text-align: center;
+  padding: 8px;
+  font-size: 11px;
+  color: #444;
+}
+
+/* ── Edit Profile Modal ── */
+.ath-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+}
+.ath-modal {
+  background: var(--s1);
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+}
+.ath-modal h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 20px;
+}
+.ath-modal label {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.ath-modal select,
+.ath-modal input[type="number"] {
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ccc;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 14px;
+  appearance: auto;
+}
+.ath-modal select:focus,
+.ath-modal input:focus {
+  border-color: #555;
+}
+.ath-modal-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.ath-modal-save {
+  flex: 1;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ath-modal-save:hover {
+  background: #d4171e;
+}
+.ath-modal-cancel {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ath-modal-cancel:hover {
+  color: #bbb;
+  border-color: #555;
+}
+
+/* ── Coach Cards in Chat ── */
+.ath-coach-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 0 8px 42px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ath-coach-cards::-webkit-scrollbar {
+  display: none;
+}
+.ath-coach-cards .coach-card {
+  min-width: 230px;
+  max-width: 240px;
+}
+.ath-coach-cards .coach-card-img {
+  height: 90px;
+}
+.ath-coach-cards .coach-card-initials {
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ath-profile-bar {
+    display: none;
+  }
+  .ath-topbar {
+    padding: 0 16px;
+  }
+  .ath-coach-cards {
+    padding-left: 0;
+  }
+}

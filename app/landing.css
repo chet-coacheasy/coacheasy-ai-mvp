@@ -1,0 +1,539 @@
+/* ── CoachEasy Landing Page — Dark Cinematic ── */
+.landing {
+  --red: #ED1C24;
+  --bg: #0a0a0a;
+  --nav: #111;
+  --s1: #1a1a1a;
+  --s2: #222;
+  --gold: #d4a843;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: #fff;
+  font-family: inherit;
+}
+
+/* ── Navbar ── */
+.ln-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ln-logo {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+}
+.ln-logo .ce {
+  color: var(--red);
+  margin-right: 6px;
+  font-size: 14px;
+  font-weight: 900;
+}
+.ln-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ln-toggle {
+  display: flex;
+  background: var(--s1);
+  border: 1px solid #333;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ln-toggle-btn {
+  padding: 7px 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #777;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.ln-toggle-btn.active {
+  background: var(--red);
+  color: #fff;
+}
+.ln-toggle-btn:not(.active):hover {
+  color: #bbb;
+}
+.ln-list-link {
+  font-size: 12.5px;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.ln-list-link:hover {
+  color: #ccc;
+}
+.ln-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--s1);
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #777;
+}
+
+/* ── Hero ── */
+.ln-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 60px;
+  overflow: hidden;
+}
+.ln-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #0a0a0a 0%,
+    #0f1923 30%,
+    #162a3e 50%,
+    #0f1923 70%,
+    #0a0a0a 100%
+  );
+}
+.ln-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center 40%,
+    transparent 0%,
+    rgba(10, 10, 10, 0.6) 70%,
+    rgba(10, 10, 10, 0.95) 100%
+  );
+}
+.ln-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+}
+.ln-hero h1 {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin: 0 0 20px;
+}
+.ln-hero h1 .gold {
+  color: var(--gold);
+}
+.ln-hero-sub {
+  font-size: 17px;
+  color: #999;
+  line-height: 1.6;
+  margin-bottom: 36px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.ln-cta {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+}
+.ln-cta:hover {
+  background: #d4171e;
+  transform: translateY(-1px);
+}
+
+/* ── Coach Danielle AI Bar ── */
+.ln-danielle {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 80px 24px 60px;
+}
+.ln-danielle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  justify-content: center;
+}
+.ln-danielle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+}
+.ln-danielle-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+}
+.ln-danielle-name span {
+  color: #555;
+}
+.ln-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--s1);
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 6px 6px 6px 20px;
+  transition: border-color 0.2s;
+}
+.ln-input-wrap:focus-within {
+  border-color: #444;
+}
+.ln-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ccc;
+  font-size: 14px;
+  padding: 10px 0;
+  font-family: inherit;
+}
+.ln-input::placeholder {
+  color: #555;
+}
+.ln-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--red);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  font-size: 16px;
+}
+.ln-send-btn:hover {
+  background: #d4171e;
+}
+
+/* ── Quick Chips ── */
+.ln-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
+}
+.ln-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--s2);
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.ln-chip:hover {
+  border-color: var(--red);
+  color: #ddd;
+  background: rgba(237, 28, 36, 0.08);
+}
+
+/* ══════════════════════════════════════
+   BELOW-FOLD SECTIONS
+   ══════════════════════════════════════ */
+
+/* ── Stats Bar ── */
+.ln-stats {
+  background: var(--s1);
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+  padding: 28px 32px;
+}
+.ln-stats-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.ln-stat {
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+}
+.ln-stat-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.ln-stat-label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ── How It Works ── */
+.ln-how {
+  background: #fff;
+  color: #111;
+  padding: 80px 32px;
+}
+.ln-how-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+.ln-how-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 12px;
+}
+.ln-how-heading {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 56px;
+  letter-spacing: -0.5px;
+}
+.ln-how-heading .red {
+  color: #e53935;
+}
+.ln-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  position: relative;
+}
+/* connector line */
+.ln-steps::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #e5e5e5;
+  z-index: 0;
+}
+.ln-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ln-step-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.ln-step-icon.red { background: #e53935; }
+.ln-step-icon.dark { background: #1a1a1a; }
+.ln-step-icon.green { background: #16a34a; }
+.ln-step-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+.ln-step-desc {
+  font-size: 13.5px;
+  color: #777;
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+/* ── Sport Filter Tabs ── */
+.ln-coaches-section {
+  background: #fafafa;
+  padding: 60px 32px 80px;
+}
+.ln-coaches-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.ln-sport-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 36px;
+  border-bottom: 1px solid #e5e5e5;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ln-sport-tabs::-webkit-scrollbar {
+  display: none;
+}
+.ln-sport-tab {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #888;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.ln-sport-tab:hover {
+  color: #555;
+}
+.ln-sport-tab.active {
+  color: #111;
+  border-bottom-color: #e53935;
+  font-weight: 600;
+}
+
+/* ── Coach Grid Section ── */
+.ln-coach-group {
+  margin-bottom: 40px;
+}
+.ln-coach-group:last-child {
+  margin-bottom: 0;
+}
+.ln-coach-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.ln-coach-group-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ln-coach-count {
+  background: #f0f0f0;
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.ln-coach-showall {
+  font-size: 13px;
+  color: #e53935;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ln-coach-showall:hover {
+  text-decoration: underline;
+}
+.ln-coach-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ln-coach-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ln-nav {
+    padding: 0 16px;
+  }
+  .ln-list-link {
+    display: none;
+  }
+  .ln-hero h1 {
+    font-size: 32px;
+  }
+  .ln-hero-sub {
+    font-size: 15px;
+  }
+  .ln-input {
+    font-size: 13px;
+  }
+  .ln-chips {
+    gap: 8px;
+  }
+  .ln-chip {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+  .ln-stats-inner {
+    justify-content: center;
+  }
+  .ln-how {
+    padding: 48px 20px;
+  }
+  .ln-how-heading {
+    font-size: 24px;
+  }
+  .ln-steps {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .ln-steps::before {
+    display: none;
+  }
+  .ln-coaches-section {
+    padding: 40px 16px 60px;
+  }
+}
