@@ -21,16 +21,29 @@ import ReactDOM from "react-dom/client";
 
 /* ── Constants ── */
 const GREETING =
-  "Hi! I'm Danielle, CoachEasy's AI assistant. How can I help you today? I can answer questions about booking sessions, finding coaches, payments, and more.";
+  "Hey there! I'm Danielle, CoachEasy's AI assistant. To get you the best answers, are you a coach or an athlete/parent?";
 
 const HUMAN_SUPPORT_MSG =
   "I'd be happy to connect you with our support team! You can reach us at:\n\n\u{1F4E7} Email: info@coacheasy.com\n\u{1F4DE} Phone: (800) 284-4602 or (514) 819-1013\n\nOur team is available Monday\u2013Friday, 9 AM \u2013 5 PM ET.";
 
-const QUICK_REPLIES = [
+const COACH_RESPONSE =
+  "Great! Welcome, Coach. I can help you with sessions, fees, payouts, profile setup, and WebTools. What would you like to know?";
+
+const ATHLETE_RESPONSE =
+  "Welcome! I'm here to help you find coaches, book sessions, and answer any questions about training on CoachEasy. What can I help you with?";
+
+const PERSONA_CHIPS = ["I'm a Coach", "I'm an Athlete / Parent"];
+
+const COACH_CHIPS = [
+  "How do I create a session?",
+  "What are the fees?",
+  "How do I set up my profile?",
+];
+
+const ATHLETE_CHIPS = [
+  "How do I find a coach?",
   "How do I book a session?",
-  "How does payment work?",
-  "I need to cancel",
-  "Talk to a human",
+  "How do payments work?",
 ];
 
 const API_PATH = "/api/danielle";
@@ -262,6 +275,10 @@ function injectKeyframes() {
       0%, 80%, 100% { transform: translateY(0); }
       40% { transform: translateY(-5px); }
     }
+    @keyframes danielleFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   `;
   document.head.appendChild(sheet);
 }
@@ -305,15 +322,23 @@ function TypingIndicator() {
 /* ── Main Widget Component ── */
 export default function DanielleWidget() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [displayMessages, setDisplayMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [showQuickReplies, setShowQuickReplies] = useState(true);
   const [hasGreeted, setHasGreeted] = useState(false);
   const [hoverTrigger, setHoverTrigger] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [fadeInId, setFadeInId] = useState(null);
+  const [persona, setPersona] = useState(null);
+  const [chipPhase, setChipPhase] = useState("persona");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const apiHistoryRef = useRef([]);
+  const msgIdCounter = useRef(0);
+  const personaRef = useRef(null);
+  const chipPhaseRef = useRef("persona");
+  const latestResponseRef = useRef(null);
+  const pendingScrollRef = useRef(null);
 
   useEffect(() => {
     injectKeyframes();
@@ -323,9 +348,33 @@ export default function DanielleWidget() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  /* Scroll to bottom for user messages and scripted responses */
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+    if (pendingScrollRef.current === "bottom") {
+      pendingScrollRef.current = null;
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [displayMessages]);
+
+  /* Scroll to bottom when typing indicator appears */
+  useEffect(() => {
+    if (isTyping) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isTyping]);
+
+  /* Scroll to top of latest Danielle response after fade-in finishes */
+  useEffect(() => {
+    if (fadeInId != null && latestResponseRef.current) {
+      const timer = setTimeout(() => {
+        latestResponseRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 620);
+      return () => clearTimeout(timer);
+    }
+  }, [fadeInId]);
 
   useEffect(() => {
     if (open && inputRef.current) {
@@ -333,14 +382,45 @@ export default function DanielleWidget() {
     }
   }, [open]);
 
-  /* Load greeting on first open */
+  /* Load greeting on first open — display only, never sent to API */
   const handleOpen = useCallback(() => {
     setOpen(true);
     if (!hasGreeted) {
-      setMessages([{ role: "assistant", content: GREETING }]);
+      setDisplayMessages([{ role: "assistant", content: GREETING }]);
       setHasGreeted(true);
     }
   }, [hasGreeted]);
+
+  /* Handle persona chip selection — scripted response, no API call */
+  const handlePersonaSelect = useCallback((type) => {
+    const isCoach = type === "coach";
+    const userText = isCoach ? "I'm a Coach" : "I'm an Athlete / Parent";
+    const danielleText = isCoach ? COACH_RESPONSE : ATHLETE_RESPONSE;
+
+    personaRef.current = type;
+    setPersona(type);
+    chipPhaseRef.current = "followup";
+    setChipPhase("followup");
+
+    pendingScrollRef.current = "bottom";
+    setDisplayMessages((prev) => [
+      ...prev,
+      { role: "user", content: userText },
+      { role: "assistant", content: danielleText },
+    ]);
+  }, []);
+
+  /* Handle follow-up chip click — sends via API */
+  const handleFollowupChip = useCallback(
+    (text) => {
+      chipPhaseRef.current = "done";
+      setChipPhase("done");
+      sendMessage(text);
+    },
+    // sendMessage is stable enough — only depends on isTyping
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   /* Send message */
   const sendMessage = useCallback(
@@ -348,31 +428,52 @@ export default function DanielleWidget() {
       const trimmed = text.trim();
       if (!trimmed || isTyping) return;
 
-      /* "Talk to a human" shortcut */
+      /* Dismiss any remaining chips */
+      if (chipPhaseRef.current !== "done") {
+        chipPhaseRef.current = "done";
+        setChipPhase("done");
+      }
+
+      /* "Talk to a human" shortcut — display only, not sent to API */
       if (trimmed === "Talk to a human") {
-        setMessages((prev) => [
+        pendingScrollRef.current = "bottom";
+        setDisplayMessages((prev) => [
           ...prev,
           { role: "user", content: trimmed },
           { role: "assistant", content: HUMAN_SUPPORT_MSG },
         ]);
-        setShowQuickReplies(false);
         setInput("");
         return;
       }
 
       const userMsg = { role: "user", content: trimmed };
-      const updatedHistory = [...messages, userMsg];
 
-      setMessages(updatedHistory);
+      /* Add user message to both display and API history */
+      apiHistoryRef.current = [...apiHistoryRef.current, userMsg];
+      pendingScrollRef.current = "bottom";
+      setDisplayMessages((prev) => [...prev, userMsg]);
       setInput("");
       setIsTyping(true);
-      setShowQuickReplies(false);
 
       try {
+        /* Prepend persona context for Anthropic */
+        let messagesToSend = apiHistoryRef.current;
+        if (personaRef.current) {
+          const ctx =
+            personaRef.current === "coach"
+              ? "This user is a Coach."
+              : "This user is an Athlete or Parent.";
+          messagesToSend = [
+            { role: "user", content: ctx },
+            { role: "assistant", content: "Understood." },
+            ...messagesToSend,
+          ];
+        }
+
         const res = await fetch(API_PATH, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: updatedHistory }),
+          body: JSON.stringify({ messages: messagesToSend }),
         });
 
         if (!res.ok) {
@@ -380,7 +481,8 @@ export default function DanielleWidget() {
           const errorMsg =
             errorData?.error ||
             "I'm having trouble connecting right now. Please contact us at info@coacheasy.com or call (800) 284-4602.";
-          setMessages((prev) => [
+          pendingScrollRef.current = "bottom";
+          setDisplayMessages((prev) => [
             ...prev,
             { role: "assistant", content: errorMsg },
           ]);
@@ -391,26 +493,31 @@ export default function DanielleWidget() {
         const reader = res.body?.getReader();
         if (!reader) throw new Error("No reader");
         const decoder = new TextDecoder();
-        let assistantContent = "";
+        let buffer = "";
 
-        /* Append a placeholder assistant message */
-        setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
+        /* Buffer the entire response — nothing renders mid-stream */
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          assistantContent += decoder.decode(value, { stream: true });
-          const snapshot = assistantContent;
-          setMessages((prev) => {
-            const copy = [...prev];
-            copy[copy.length - 1] = { role: "assistant", content: snapshot };
-            return copy;
-          });
+          buffer += decoder.decode(value, { stream: true });
         }
+
+        /* Add complete response to API history */
+        const assistantMsg = { role: "assistant", content: buffer };
+        apiHistoryRef.current = [...apiHistoryRef.current, assistantMsg];
+
+        /* Add to display with a unique id for fade-in */
+        const id = ++msgIdCounter.current;
+        setFadeInId(id);
+        setDisplayMessages((prev) => [
+          ...prev,
+          { ...assistantMsg, _fadeId: id },
+        ]);
 
         setIsTyping(false);
       } catch (err) {
-        setMessages((prev) => [
+        pendingScrollRef.current = "bottom";
+        setDisplayMessages((prev) => [
           ...prev.filter((m) => m.content !== ""),
           {
             role: "assistant",
@@ -421,8 +528,18 @@ export default function DanielleWidget() {
         setIsTyping(false);
       }
     },
-    [messages, isTyping],
+    [isTyping],
   );
+
+  /* Fix stale closure: keep handleFollowupChip in sync with sendMessage */
+  const followupRef = useRef(handleFollowupChip);
+  useEffect(() => {
+    followupRef.current = (text) => {
+      chipPhaseRef.current = "done";
+      setChipPhase("done");
+      sendMessage(text);
+    };
+  }, [sendMessage]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -474,31 +591,60 @@ export default function DanielleWidget() {
 
           {/* Messages */}
           <div style={styles.messagesArea}>
-            {messages.map((msg, i) =>
-              msg.role === "assistant" ? (
-                <div key={i} style={styles.assistantRow}>
-                  <img src={AVATAR_SRC} alt="Danielle" style={styles.bubbleAvatar} />
-                  <div style={styles.bubbleAssistant}>{msg.content}</div>
-                </div>
-              ) : (
+            {displayMessages.map((msg, i) => {
+              if (msg.role === "assistant") {
+                const shouldAnimate =
+                  msg._fadeId != null && msg._fadeId === fadeInId;
+                return (
+                  <div
+                    key={msg._fadeId || i}
+                    ref={shouldAnimate ? latestResponseRef : undefined}
+                    style={styles.assistantRow}
+                  >
+                    <img
+                      src={AVATAR_SRC}
+                      alt="Danielle"
+                      style={styles.bubbleAvatar}
+                    />
+                    <div
+                      style={{
+                        ...styles.bubbleAssistant,
+                        ...(shouldAnimate
+                          ? {
+                              animation:
+                                "danielleFadeIn 600ms ease-in-out forwards",
+                            }
+                          : {}),
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                );
+              }
+              return (
                 <div key={i} style={styles.bubbleUser}>
                   {msg.content}
                 </div>
-              )
-            )}
+              );
+            })}
             {isTyping && (
               <div style={styles.assistantRow}>
-                <img src={AVATAR_SRC} alt="Danielle" style={styles.bubbleAvatar} />
+                <img
+                  src={AVATAR_SRC}
+                  alt="Danielle"
+                  style={styles.bubbleAvatar}
+                />
                 <TypingIndicator />
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick replies */}
-          {showQuickReplies && messages.length === 1 && (
+          {/* Persona chips — shown once at the start */}
+          {chipPhase === "persona" && (
             <div style={styles.quickReplies}>
-              {QUICK_REPLIES.map((text) => (
+              {PERSONA_CHIPS.map((text) => (
                 <button
                   key={text}
                   style={styles.chip}
@@ -512,11 +658,42 @@ export default function DanielleWidget() {
                     e.target.style.color = "#ccc";
                     e.target.style.borderColor = "#333";
                   }}
-                  onClick={() => sendMessage(text)}
+                  onClick={() =>
+                    handlePersonaSelect(
+                      text === "I'm a Coach" ? "coach" : "athlete"
+                    )
+                  }
                 >
                   {text}
                 </button>
               ))}
+            </div>
+          )}
+
+          {/* Follow-up chips — shown once after persona selection */}
+          {chipPhase === "followup" && persona && (
+            <div style={styles.quickReplies}>
+              {(persona === "coach" ? COACH_CHIPS : ATHLETE_CHIPS).map(
+                (text) => (
+                  <button
+                    key={text}
+                    style={styles.chip}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "#e53935";
+                      e.target.style.color = "#fff";
+                      e.target.style.borderColor = "#e53935";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "#1a1a1a";
+                      e.target.style.color = "#ccc";
+                      e.target.style.borderColor = "#333";
+                    }}
+                    onClick={() => followupRef.current(text)}
+                  >
+                    {text}
+                  </button>
+                )
+              )}
             </div>
           )}
 

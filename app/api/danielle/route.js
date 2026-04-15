@@ -16,6 +16,29 @@ export async function POST(req) {
       );
     }
 
+    /* Anthropic requires the first message to have role "user".
+       The widget includes the greeting (assistant) at the start,
+       so strip any leading assistant messages. */
+    const apiMessages = messages.filter((m) => m.role === "user" || m.role === "assistant");
+    const firstUserIdx = apiMessages.findIndex((m) => m.role === "user");
+    const trimmedMessages = firstUserIdx >= 0 ? apiMessages.slice(firstUserIdx) : [];
+
+    /* Strip to only role + content — Anthropic rejects extra fields */
+    const cleanMessages = trimmedMessages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    if (!cleanMessages.length || cleanMessages[0].role !== "user") {
+      return Response.json(
+        {
+          error:
+            "I'm having trouble connecting right now. Please contact us at info@coacheasy.com or call (800) 284-4602.",
+        },
+        { status: 400 },
+      );
+    }
+
     const systemPrompt =
       "You are Danielle, CoachEasy's AI support assistant. " +
       (language
@@ -28,7 +51,7 @@ export async function POST(req) {
       max_tokens: 600,
       stream: true,
       system: systemPrompt,
-      messages,
+      messages: cleanMessages,
     });
 
     const encoder = new TextEncoder();

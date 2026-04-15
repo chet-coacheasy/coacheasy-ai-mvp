@@ -12,7 +12,9 @@ export async function POST(req) {
       );
     }
 
-    const profileStr = `Sport: ${profile.sport}, Level: ${profile.level}, Age: ${profile.age}, Location: ${profile.city}`;
+    const profileStr = profile
+      ? `Sport: ${profile.sport || "N/A"}, Level: ${profile.level || "N/A"}, Age: ${profile.age || "N/A"}, Location: ${profile.city || "N/A"}`
+      : "No profile provided";
 
     const sessionsStr = sessions
       .map(
@@ -28,7 +30,7 @@ export async function POST(req) {
     });
 
     const stream = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       stream: true,
       system: systemPrompt,
