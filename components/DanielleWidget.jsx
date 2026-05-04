@@ -21,29 +21,29 @@ import ReactDOM from "react-dom/client";
 
 /* ── Constants ── */
 const GREETING =
-  "Hey there! I'm Danielle, CoachEasy's AI assistant. To get you the best answers, are you a coach or an athlete/parent?";
+  "Hey there! I'm your ESS Support Assistant, here to help you with Mobile Office Manager (MOM). To get you the best answers — are you an Admin or a Standard User?";
 
 const HUMAN_SUPPORT_MSG =
   "I'd be happy to connect you with our support team! You can reach us at:\n\n\u{1F4E7} Email: info@coacheasy.com\n\u{1F4DE} Phone: (800) 284-4602 or (514) 819-1013\n\nOur team is available Monday\u2013Friday, 9 AM \u2013 5 PM ET.";
 
-const COACH_RESPONSE =
-  "Great! Welcome, Coach. I can help you with sessions, fees, payouts, profile setup, and WebTools. What would you like to know?";
+const ADMIN_RESPONSE =
+  "Welcome, Admin! I can help you with user management, email setup, dashboard configuration, and system settings. What would you like to know?";
 
-const ATHLETE_RESPONSE =
-  "Welcome! I'm here to help you find coaches, book sessions, and answer any questions about training on CoachEasy. What can I help you with?";
+const STANDARD_RESPONSE =
+  "Welcome! I can help you navigate MOM — from logging in to managing your profile, email, and dashboards. What can I help you with?";
 
-const PERSONA_CHIPS = ["I'm a Coach", "I'm an Athlete / Parent"];
+const PERSONA_CHIPS = ["I'm an Admin", "I'm a Standard User"];
 
-const COACH_CHIPS = [
-  "How do I create a session?",
-  "What are the fees?",
-  "How do I set up my profile?",
+const ADMIN_CHIPS = [
+  "How do I set up a user's email?",
+  "How do I manage dashboards?",
+  "How do I update user details?",
 ];
 
-const ATHLETE_CHIPS = [
-  "How do I find a coach?",
-  "How do I book a session?",
-  "How do payments work?",
+const STANDARD_CHIPS = [
+  "How do I log in to MOM?",
+  "How do I update my profile?",
+  "How do I add an email signature?",
 ];
 
 const API_PATH = "/api/danielle";
@@ -58,7 +58,7 @@ const styles = {
     width: 56,
     height: 56,
     borderRadius: "50%",
-    background: "#e53935",
+    background: "#003580",
     border: "none",
     cursor: "pointer",
     display: "flex",
@@ -127,7 +127,7 @@ const styles = {
     height: 38,
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid #e53935",
+    border: "2px solid #003580",
     flexShrink: 0,
   },
   headerTitle: {
@@ -189,7 +189,7 @@ const styles = {
     maxWidth: "85%",
     padding: "10px 14px",
     borderRadius: "14px 14px 4px 14px",
-    background: "#e53935",
+    background: "#003580",
     color: "#fff",
     fontSize: 14,
     lineHeight: 1.5,
@@ -236,7 +236,7 @@ const styles = {
     height: 38,
     borderRadius: "50%",
     border: "none",
-    background: "#e53935",
+    background: "#003580",
     color: "#fff",
     cursor: "pointer",
     display: "flex",
@@ -393,9 +393,9 @@ export default function DanielleWidget() {
 
   /* Handle persona chip selection — scripted response, no API call */
   const handlePersonaSelect = useCallback((type) => {
-    const isCoach = type === "coach";
-    const userText = isCoach ? "I'm a Coach" : "I'm an Athlete / Parent";
-    const danielleText = isCoach ? COACH_RESPONSE : ATHLETE_RESPONSE;
+    const isAdmin = type === "admin";
+    const userText = isAdmin ? "I'm an Admin" : "I'm a Standard User";
+    const danielleText = isAdmin ? ADMIN_RESPONSE : STANDARD_RESPONSE;
 
     personaRef.current = type;
     setPersona(type);
@@ -460,9 +460,9 @@ export default function DanielleWidget() {
         let messagesToSend = apiHistoryRef.current;
         if (personaRef.current) {
           const ctx =
-            personaRef.current === "coach"
-              ? "This user is a Coach."
-              : "This user is an Athlete or Parent.";
+            personaRef.current === "admin"
+              ? "This user is a MOM Admin."
+              : "This user is a Standard MOM User.";
           messagesToSend = [
             { role: "user", content: ctx },
             { role: "assistant", content: "Understood." },
@@ -576,8 +576,8 @@ export default function DanielleWidget() {
             <div style={styles.headerLeft}>
               <img src={AVATAR_SRC} alt="Danielle" style={styles.headerAvatar} />
               <div>
-                <p style={styles.headerTitle}>Assistant Coach Danielle</p>
-                <p style={styles.headerSubtitle}>CE's Virtual Assistant Coach</p>
+                <p style={styles.headerTitle}>ESS Support</p>
+                <p style={styles.headerSubtitle}>Mobile Office Manager Support</p>
               </div>
             </div>
             <button
@@ -649,9 +649,9 @@ export default function DanielleWidget() {
                   key={text}
                   style={styles.chip}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "#e53935";
+                    e.target.style.background = "#003580";
                     e.target.style.color = "#fff";
-                    e.target.style.borderColor = "#e53935";
+                    e.target.style.borderColor = "#003580";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.background = "#1a1a1a";
@@ -660,7 +660,7 @@ export default function DanielleWidget() {
                   }}
                   onClick={() =>
                     handlePersonaSelect(
-                      text === "I'm a Coach" ? "coach" : "athlete"
+                      text === "I'm an Admin" ? "admin" : "standard"
                     )
                   }
                 >
@@ -673,15 +673,15 @@ export default function DanielleWidget() {
           {/* Follow-up chips — shown once after persona selection */}
           {chipPhase === "followup" && persona && (
             <div style={styles.quickReplies}>
-              {(persona === "coach" ? COACH_CHIPS : ATHLETE_CHIPS).map(
+              {(persona === "admin" ? ADMIN_CHIPS : STANDARD_CHIPS).map(
                 (text) => (
                   <button
                     key={text}
                     style={styles.chip}
                     onMouseEnter={(e) => {
-                      e.target.style.background = "#e53935";
+                      e.target.style.background = "#003580";
                       e.target.style.color = "#fff";
-                      e.target.style.borderColor = "#e53935";
+                      e.target.style.borderColor = "#003580";
                     }}
                     onMouseLeave={(e) => {
                       e.target.style.background = "#1a1a1a";

@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { COACHEASY_KNOWLEDGE_BASE } from "@/lib/knowledge-base";
+import { MOM_KNOWLEDGE_BASE } from "@/lib/knowledge-base";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -44,7 +44,7 @@ export async function POST(req) {
       (language
         ? `The user's preferred language is ${language}. Respond in that language when possible. `
         : "") +
-      COACHEASY_KNOWLEDGE_BASE;
+      MOM_KNOWLEDGE_BASE;
 
     const stream = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
